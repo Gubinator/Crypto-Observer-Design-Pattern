@@ -5,7 +5,7 @@ public interface Subject {
 
     public void unsubscribe(Subscriber sub);
 
-    public void update(float priceBTC, float priceETH, float priceDOGE, float priceBCC);
+    public void updateAll(float priceBTC, float priceETH, float priceDOGE, float priceBCC);
 
     public void notifySubscribers();
 }

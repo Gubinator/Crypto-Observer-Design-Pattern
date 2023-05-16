@@ -13,7 +13,7 @@ import java.util.List;
 public class CryptoMarket implements Subject {
 
     private float priceBTC, priceETH, priceDOGE, priceBCC;
-    private List<Subscriber> subscriberList = new ArrayList<Subscriber>();
+    private List<Subscriber> subscriberList = new ArrayList<>();
 
     public float getPriceBTC() {
         return priceBTC;
@@ -31,20 +31,25 @@ public class CryptoMarket implements Subject {
         return priceBCC;
     }
 
+    //All setters notify users when coin value is changed
     public void setPriceBTC(float priceBTC) {
         this.priceBTC = priceBTC;
+        notifySubscribers();
     }
 
     public void setPriceETH(float priceETH) {
         this.priceETH = priceETH;
+        notifySubscribers();
     }
 
     public void setPriceDOGE(float priceDOGE) {
         this.priceDOGE = priceDOGE;
+        notifySubscribers();
     }
 
     public void setPriceBCC(float priceBCC) {
         this.priceBCC = priceBCC;
+        notifySubscribers();
     }
 
     @Override
@@ -59,8 +64,10 @@ public class CryptoMarket implements Subject {
         System.out.println("Subscriber removed: " + sub.getName()+"\n");
     }
 
+    //In a case if you want to set all values eg. when you start
+    //Although it's not necessary method
     @Override
-    public void update(float priceBTC, float priceETH, float priceDOGE, float priceBCC) {
+    public void updateAll(float priceBTC, float priceETH, float priceDOGE, float priceBCC) {
         this.priceBTC = priceBTC;
         this.priceETH = priceETH;
         this.priceBCC = priceBCC;
@@ -77,7 +84,7 @@ public class CryptoMarket implements Subject {
 
     public void getPricesOnline() {
 
-        // Hardcoded for those values
+        // Hardcoded for 4 coins, starting with BTC
         String[] coinIdentifiers = {"Qwsogvtv82FCd", "razxDUgYGNAdQ", "a91GCGd_u96cF", "yDaCLN1Y2kPKy"};
 
         for (String identifier : coinIdentifiers) {
@@ -99,6 +106,7 @@ public class CryptoMarket implements Subject {
                     JsonObject data = json.getAsJsonObject("data");
                     JsonObject coin = data.getAsJsonObject("coin");
                     String name = coin.get("name").toString();
+                    //Returned string contains " ", for further operations it's removed
                     name = name.replace('"', ' ').trim();
                     String price = coin.get("price").toString().replace('"', ' ').trim();
                     int priceDotIndex = price.indexOf('.');
@@ -117,7 +125,6 @@ public class CryptoMarket implements Subject {
                             break;
                         case("BitConnect"):
                             setPriceBCC(coinPrice);
-
                     }
                 }
             } catch (IOException e) {
