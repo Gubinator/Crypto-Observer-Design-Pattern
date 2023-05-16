@@ -4,12 +4,10 @@ public class Subscriber implements Observer {
 
     private String name;
 
-    //Although there is really only one crypto market - so property market is kinda excess
-    private CryptoMarket market;
+    //Although there is really only one crypto market  - so property market would be excess
 
-    public Subscriber(String name, CryptoMarket market){
+    public Subscriber(String name){
         this.name = name;
-        this.market = market;
     }
 
     public String getName(){
