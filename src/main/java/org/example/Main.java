@@ -14,7 +14,8 @@ public class Main {
         market.subscribe(t1);
         market.subscribe(t2);
         market.subscribe(t3);
-        market.update(32, 334, 3, 4);
-        market.updateOnline();
+        market.unsubscribe(t3);
+
+        market.getPricesOnline();
     }
 }

@@ -15,10 +15,10 @@ public class Subscriber implements Observer {
     }
 
     @Override
-    public void updateValue(float priceBTC, float priceETH, float priceDOGE, float priceBCC) {
+    public void notifyUpdated(CryptoMarket market) {
         System.out.println("User: "+getName());
-        System.out.println("Bitcoin price: "+priceBTC+"\nEtherium price: "+priceETH+"\nDoge price: "+priceDOGE+
-                "\nBitconnect price: "+priceBCC);
+        System.out.println("Bitcoin price: "+market.getPriceBTC()+"\nEthereum price: "+market.getPriceETH()+"" +
+                "\nDoge price: "+market.getPriceDOGE()+ "\nBitconnect price: "+market.getPriceBCC()+"\n");
     }
 
 

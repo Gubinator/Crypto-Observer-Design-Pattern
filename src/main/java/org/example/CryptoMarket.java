@@ -15,16 +15,48 @@ public class CryptoMarket implements Subject {
     private float priceBTC, priceETH, priceDOGE, priceBCC;
     private List<Subscriber> subscriberList = new ArrayList<Subscriber>();
 
+    public float getPriceBTC() {
+        return priceBTC;
+    }
+
+    public float getPriceETH() {
+        return priceETH;
+    }
+
+    public float getPriceDOGE() {
+        return priceDOGE;
+    }
+
+    public float getPriceBCC() {
+        return priceBCC;
+    }
+
+    public void setPriceBTC(float priceBTC) {
+        this.priceBTC = priceBTC;
+    }
+
+    public void setPriceETH(float priceETH) {
+        this.priceETH = priceETH;
+    }
+
+    public void setPriceDOGE(float priceDOGE) {
+        this.priceDOGE = priceDOGE;
+    }
+
+    public void setPriceBCC(float priceBCC) {
+        this.priceBCC = priceBCC;
+    }
+
     @Override
     public void subscribe(Subscriber sub) {
         subscriberList.add(sub);
-        System.out.println("New subscriber added: " + sub.getName());
+        System.out.println("New subscriber added: " + sub.getName()+"\n");
     }
 
     @Override
     public void unsubscribe(Subscriber sub) {
         subscriberList.remove(sub);
-        System.out.println("Subscriber removed: " + sub.getName());
+        System.out.println("Subscriber removed: " + sub.getName()+"\n");
     }
 
     @Override
@@ -39,12 +71,13 @@ public class CryptoMarket implements Subject {
     @Override
     public void notifySubscribers() {
         for (Subscriber sub : subscriberList) {
-            sub.updateValue(priceBTC, priceETH, priceDOGE, priceBCC);
+            sub.notifyUpdated(this);
         }
     }
 
-    public void updateOnline() {
+    public void getPricesOnline() {
 
+        // Hardcoded for those values
         String[] coinIdentifiers = {"Qwsogvtv82FCd", "razxDUgYGNAdQ", "a91GCGd_u96cF", "yDaCLN1Y2kPKy"};
 
         for (String identifier : coinIdentifiers) {
@@ -52,7 +85,7 @@ public class CryptoMarket implements Subject {
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()
-                    .url("https://coinranking1.p.rapidapi.com/coin/"+identifier+"/price?referenceCurrencyUuid=yhjMzLPhuIDl")
+                    .url("https://coinranking1.p.rapidapi.com/coin/"+identifier+"/")
                     .get()
                     .addHeader("X-RapidAPI-Key", "783700f945mshd75725904a54db7p116b52jsn283a26d1fefb")
                     .addHeader("X-RapidAPI-Host", "coinranking1.p.rapidapi.com")
@@ -64,16 +97,34 @@ public class CryptoMarket implements Subject {
                     String responseBody = response.body().string();
                     JsonObject json = new JsonParser().parse(responseBody).getAsJsonObject();
                     JsonObject data = json.getAsJsonObject("data");
-                    String price = data.get("price").toString().replace('"', ' ').trim();
+                    JsonObject coin = data.getAsJsonObject("coin");
+                    String name = coin.get("name").toString();
+                    name = name.replace('"', ' ').trim();
+                    String price = coin.get("price").toString().replace('"', ' ').trim();
                     int priceDotIndex = price.indexOf('.');
                     price = price.substring(0, priceDotIndex + 3);
                     float coinPrice = Float.parseFloat(price);
-                    System.out.println(price);
+
+                    switch (name){
+                        case ("Bitcoin"):
+                            setPriceBTC(coinPrice);
+                            break;
+                        case("Dogecoin"):
+                            setPriceDOGE(coinPrice);
+                            break;
+                        case("Ethereum"):
+                            setPriceETH(coinPrice);
+                            break;
+                        case("BitConnect"):
+                            setPriceBCC(coinPrice);
+
+                    }
                 }
             } catch (IOException e) {
                 System.out.println("Error occured");
             }
         }
+        notifySubscribers();
     }
 
 
